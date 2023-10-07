@@ -4,7 +4,7 @@ from typing import Optional
 
 
 @dataclass
-class Review:
+class Review(ABC):
 
     _id: str
     title: str
