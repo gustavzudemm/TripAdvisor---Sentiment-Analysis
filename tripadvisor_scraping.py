@@ -166,7 +166,7 @@ def load(reviews: list[TripAdvisorReview]):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv('test.csv', encoding='UTF-8')
+    df.to_csv('tripadvisor_lufthansa_reviews.csv', encoding='UTF-8')
         
 
 def main():
