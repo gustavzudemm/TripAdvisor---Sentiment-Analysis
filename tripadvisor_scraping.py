@@ -137,14 +137,29 @@ def extract(first_page: bool = True, number_of_pages: int = 5) -> list[dict]:
     return review_list
 
 def transform(reviews: list[dict]) -> list[TripAdvisorReview]:
-    pass
+
+    review_dataobj = []
+    
+    for review in reviews:
+
+        id = review['_id']
+        title = review['title']
+        text = review['text']
+        rating = review['rating']
+        flight_date = review['date']
+        flight_connection = review['connection']
+
+        ta_review = TripAdvisorReview(id, title, text, rating, None, None, flight_date, flight_connection)
+        review_dataobj.append(ta_review)
+    
+    return review_dataobj
 
 def load(reviews: list[TripAdvisorReview]):
     pass
 
-
 def main():
     review_list = extract(first_page=True, number_of_pages=10)
+
 
 if __name__ == "__main__":
     main()

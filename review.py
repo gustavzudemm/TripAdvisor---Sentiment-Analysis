@@ -6,6 +6,7 @@ from typing import Optional
 @dataclass
 class Review:
 
+    _id: str
     title: str
     text: str
     rating: int
@@ -16,9 +17,9 @@ class Review:
 class TripAdvisorReview(Review):
     
     flight_date: str
-    flight_type: str            # Domestic, Europe, International etc.
-    flight_connection: str      # Start - Destination
-    booking_class: Optional[str]          # Econonmy, Business, First Class
+    flight_connection: str
+    flight_type: Optional[str]      # Domestic, International, Europe etc.
+    booking_class: Optional[str]    # Economy, Business etc.
 
 
 
