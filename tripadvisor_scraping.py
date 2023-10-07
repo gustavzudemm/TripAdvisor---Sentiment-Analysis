@@ -1,10 +1,13 @@
 from helium import *
 from review import TripAdvisorReview
 from pprint import pprint
+import dataclasses
+from dataclasses import dataclass
 import time
 import string
 import random
 import re
+import pandas as pd
 
 
 ''' Scrolling the page'''
@@ -149,16 +152,27 @@ def transform(reviews: list[dict]) -> list[TripAdvisorReview]:
         flight_date = review['date']
         flight_connection = review['connection']
 
-        ta_review = TripAdvisorReview(id, title, text, rating, None, None, flight_date, flight_connection)
+        ta_review = TripAdvisorReview(id, title, text, rating, None, None, flight_date, flight_connection, None, None)
         review_dataobj.append(ta_review)
     
     return review_dataobj
 
 def load(reviews: list[TripAdvisorReview]):
-    pass
+    
+    review_dict = []
+
+    for ta_review in reviews:
+        review = dataclasses.asdict(ta_review)
+        review_dict.append(review)
+
+    df = pd.DataFrame.from_records(review_dict)
+    df.to_csv('test.csv', encoding='UTF-8')
+        
 
 def main():
     review_list = extract(first_page=True, number_of_pages=10)
+    review_list = transform(review_list)
+    load(review_list)
 
 
 if __name__ == "__main__":
