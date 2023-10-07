@@ -1,0 +1,150 @@
+from helium import *
+from review import TripAdvisorReview
+from pprint import pprint
+import time
+import string
+import random
+import re
+
+
+''' Scrolling the page'''
+def scroll_page(is_first_page: bool = True, pagination: int = 5):
+
+    if is_first_page:
+        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729113-Reviews-Lufthansa.html#REVIEWS'
+        start_firefox(headless=True)
+        go_to(first_page_url)
+    else:
+        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729113-Reviews-or{pagination}-Lufthansa.html#REVIEWS'
+        start_firefox(headless=True)
+        go_to(url_paginated)
+
+    ''' Scrolling routine '''
+    
+    click('Akzeptieren')
+    scroll_down(500)
+
+''' Scrolling after scraping the ratings first'''
+def scroll_delay():
+    click('Mehr lesen')
+    scroll_down(500)
+
+def get_ratings() -> list[int]:
+    review_stars = find_all(S('.ui_bubble_rating'))
+
+    # Only the last five ratings are review-related
+    review_stars = review_stars[11:]
+
+    # Convert Helium class objects to string objects
+    review_stars = [str(stars) for stars in review_stars]
+
+    # Extracting digits and converting to single digits
+    star_ratings = [re.findall(r"\d+", stars) for stars in review_stars]
+    star_ratings = [int(stars[0]) for stars in star_ratings]
+    star_ratings = [rating / 10 for rating in star_ratings]
+
+    return star_ratings
+
+def get_review_titles() -> list[str]:
+
+    review_titles = find_all(S('.Qwuub'))
+    titles = [item.web_element.text for item in review_titles]
+    return titles
+
+def get_review_texts() -> list[str]:
+    review_text = find_all(S('.QewHA'))
+    review_text = [review.web_element.text for review in review_text]
+
+    return review_text
+
+def get_travel_dates() -> list[str]:
+
+    dates = find_all(S('.teHYY'))
+    dates = [date.web_element.text for date in dates]
+
+    # Convert to datetime
+    months = [date.split(' ')[1] for date in dates]
+    years = [date.split(' ')[2] for date in dates]
+    # months_num = [month_ger[month] for month in months]
+
+    datetime_obj = [f'{month} {year}' for year, month in zip(years, months)]
+
+    return datetime_obj
+
+def get_flight_connections():
+
+    headers = find_all(S('.tNvbV'))
+    headers = [header.web_element.text for header in headers]
+    flight_connections = [header.split('\n')[0] for header in headers]
+
+    return flight_connections
+
+
+def scrape_routine():
+    pass
+
+
+''' Generate unique ID for each Review '''
+def generate_uid():
+
+    # Define the pool of characters to choose from
+    characters = string.ascii_letters + string.digits
+    unique_id = ''.join(random.choice(characters) for _ in range(8))
+    return unique_id
+        
+
+def extract(first_page: bool = True, number_of_pages: int = 5) -> list[dict]:
+
+    review_list = []
+
+    for i in range(0, number_of_pages, 5):
+
+        print(f'Scraping page {i} of {number_of_pages}...')
+
+        scroll_page(first_page, number_of_pages)
+        star_ratings = get_ratings()
+        scroll_delay()
+        review_titles = get_review_titles()
+        review_texts = get_review_texts()
+        travel_dates = get_travel_dates()
+        flight_connections = get_flight_connections()
+
+        kill_browser()
+
+        ''' Create dictionaries and append them to review_list '''
+        for title, rating, text, date, connection in zip(review_titles, star_ratings, review_texts, travel_dates, flight_connections):
+            review = {}
+            review['_id'] = generate_uid()
+            review['title'] = title
+            review['rating'] = rating
+            review['text'] = text
+            review['date'] = date
+            review['connection'] = connection
+
+            ''' Single Review scraped feedback'''
+            print(f'Review with ID: {review["_id"]} scraped!')
+
+            review_list.append(review)
+
+        first_page = False
+        
+        ''' Set sleeping time to avoid too many requests in a short period of time'''
+        if (i != number_of_pages-5):
+            sleeping_time = random.randint(10,15)
+            print(f'Sleeping time: {sleeping_time} sec.')
+            time.sleep(sleeping_time)
+
+    return review_list
+
+def transform(reviews: list[dict]) -> list[TripAdvisorReview]:
+    pass
+
+def load(reviews: list[TripAdvisorReview]):
+    pass
+
+
+def main():
+    review_list = extract(first_page=True, number_of_pages=10)
+
+if __name__ == "__main__":
+    main()
