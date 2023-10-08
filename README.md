@@ -11,7 +11,7 @@ Sentiment Analysis of german reviews on TripAdvisor
 - ML-Model: *Logistic Regression*
   - Tfidf-Vectorization (max_feat=50)
   - max_iter=500
-## results
+## Results
 - Training Accuracy: 86.7%
 - Test Accuracy: 81.5%
 
