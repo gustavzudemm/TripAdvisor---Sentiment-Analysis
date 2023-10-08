@@ -96,7 +96,7 @@ def generate_uid():
     return unique_id
         
 
-def extract(first_page: bool = True, number_of_pages: int = 5) -> list[dict]:
+def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: int  = 0) -> list[dict]:
 
     review_list = []
     first_page = True
@@ -124,6 +124,7 @@ def extract(first_page: bool = True, number_of_pages: int = 5) -> list[dict]:
             review['text'] = text
             review['date'] = date
             review['connection'] = connection
+            review['airline'] = 'Lufthansa'
 
             ''' Single Review scraped feedback'''
             print(f'Review with ID: {review["_id"]} scraped!')
@@ -152,8 +153,9 @@ def transform(reviews: list[dict]) -> list[TripAdvisorReview]:
         rating = review['rating']
         flight_date = review['date']
         flight_connection = review['connection']
+        airline_name = review['airline']
 
-        ta_review = TripAdvisorReview(id, title, text, rating, None, None, flight_date, flight_connection, None, None)
+        ta_review = TripAdvisorReview(id, title, text, rating, None, None, airline_name, flight_date, flight_connection, None, None)
         review_dataobj.append(ta_review)
     
     return review_dataobj
@@ -171,7 +173,9 @@ def load(reviews: list[TripAdvisorReview]):
         
 
 def main():
-    review_list = extract(first_page=True, number_of_pages=500)
+
+    # First 200 Batch
+    review_list = extract(first_page=True, number_of_pages=5)
     review_list = transform(review_list)
     load(review_list)
 

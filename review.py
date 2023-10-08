@@ -16,6 +16,7 @@ class Review(ABC):
 @dataclass
 class TripAdvisorReview(Review):
     
+    airline_name: str
     flight_date: str
     flight_connection: str
     flight_type: Optional[str]      # Domestic, International, Europe etc.
