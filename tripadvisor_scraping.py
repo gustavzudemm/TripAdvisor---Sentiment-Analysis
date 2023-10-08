@@ -169,13 +169,13 @@ def load(reviews: list[TripAdvisorReview]):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv('tripadvisor_lufthansa_reviews_0_100.csv', encoding='UTF-8')
+    df.to_csv('tripadvisor_lufthansa_reviews_100_200.csv', encoding='UTF-8')
         
 
 def main():
 
     # First 100 Batch
-    review_list = extract(first_page=True, number_of_pages=100, starting_page=0)
+    review_list = extract(first_page=True, number_of_pages=200, starting_page=100)
     review_list = transform(review_list)
     load(review_list)
 
