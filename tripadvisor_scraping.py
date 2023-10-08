@@ -105,7 +105,7 @@ def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: in
 
         print(f'Scraping page {i} of {number_of_pages}...')
 
-        scroll_page(first_page, number_of_pages)
+        scroll_page(first_page, i)
         star_ratings = get_ratings()
         scroll_delay()
         review_titles = get_review_titles()
@@ -169,13 +169,13 @@ def load(reviews: list[TripAdvisorReview]):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv('tripadvisor_lufthansa_reviews.csv', encoding='UTF-8')
+    df.to_csv('tripadvisor_lufthansa_reviews_0_100.csv', encoding='UTF-8')
         
 
 def main():
 
-    # First 200 Batch
-    review_list = extract(first_page=True, number_of_pages=5)
+    # First 100 Batch
+    review_list = extract(first_page=True, number_of_pages=100, starting_page=0)
     review_list = transform(review_list)
     load(review_list)
 
