@@ -101,29 +101,29 @@ def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: in
     review_list = []
     first_page = True
 
-    for i in range(0, number_of_pages, 5):
+    for i in range(starting_page, number_of_pages, 5):
 
         print(f'Scraping page {i} of {number_of_pages}...')
 
         scroll_page(first_page, i)
         star_ratings = get_ratings()
         scroll_delay()
-        review_titles = get_review_titles()
+        # review_titles = get_review_titles()
         review_texts = get_review_texts()
-        travel_dates = get_travel_dates()
-        flight_connections = get_flight_connections()
+        # travel_dates = get_travel_dates()
+        # flight_connections = get_flight_connections()
 
         kill_browser()
 
         ''' Create dictionaries and append them to review_list '''
-        for title, rating, text, date, connection in zip(review_titles, star_ratings, review_texts, travel_dates, flight_connections):
+        for rating, text in zip(star_ratings, review_texts):
             review = {}
             review['_id'] = generate_uid()
-            review['title'] = title
+            # review['title'] = title
             review['rating'] = rating
             review['text'] = text
-            review['date'] = date
-            review['connection'] = connection
+            # review['date'] = date
+            # review['connection'] = connection
             review['airline'] = 'Lufthansa'
 
             ''' Single Review scraped feedback'''
@@ -135,7 +135,7 @@ def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: in
         
         ''' Set sleeping time to avoid too many requests in a short period of time'''
         if (i != number_of_pages-5):
-            sleeping_time = random.randint(10,15)
+            sleeping_time = random.randint(15,20)
             print(f'Sleeping time: {sleeping_time} sec.')
             time.sleep(sleeping_time)
 
@@ -148,14 +148,14 @@ def transform(reviews: list[dict]) -> list[TripAdvisorReview]:
     for review in reviews:
 
         id = review['_id']
-        title = review['title']
+        # title = review['title']
         text = review['text']
         rating = review['rating']
-        flight_date = review['date']
-        flight_connection = review['connection']
+        # flight_date = review['date']
+        # flight_connection = review['connection']
         airline_name = review['airline']
 
-        ta_review = TripAdvisorReview(id, title, text, rating, None, None, airline_name, flight_date, flight_connection, None, None)
+        ta_review = TripAdvisorReview(id, None, text, rating, None, None, airline_name, None, None, None, None)
         review_dataobj.append(ta_review)
     
     return review_dataobj
@@ -169,13 +169,13 @@ def load(reviews: list[TripAdvisorReview]):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv('tripadvisor_lufthansa_reviews_100_200.csv', encoding='UTF-8')
+    df.to_csv('tripadvisor_lufthansa_reviews.csv', encoding='UTF-8')
         
 
 def main():
 
     # First 100 Batch
-    review_list = extract(first_page=True, number_of_pages=200, starting_page=100)
+    review_list = extract(first_page=True, number_of_pages=10)
     review_list = transform(review_list)
     load(review_list)
 
