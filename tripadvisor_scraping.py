@@ -99,6 +99,7 @@ def generate_uid():
 def extract(first_page: bool = True, number_of_pages: int = 5) -> list[dict]:
 
     review_list = []
+    first_page = True
 
     for i in range(0, number_of_pages, 5):
 
@@ -170,7 +171,7 @@ def load(reviews: list[TripAdvisorReview]):
         
 
 def main():
-    review_list = extract(first_page=True, number_of_pages=1000)
+    review_list = extract(first_page=True, number_of_pages=500)
     review_list = transform(review_list)
     load(review_list)
 
