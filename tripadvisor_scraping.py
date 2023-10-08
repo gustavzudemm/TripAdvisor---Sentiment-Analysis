@@ -175,7 +175,7 @@ def load(reviews: list[TripAdvisorReview]):
 def main():
 
     # First 100 Batch
-    review_list = extract(first_page=True, number_of_pages=10)
+    review_list = extract(first_page=True, number_of_pages=1000)
     review_list = transform(review_list)
     load(review_list)
 
