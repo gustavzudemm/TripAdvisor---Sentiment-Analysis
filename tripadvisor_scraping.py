@@ -14,11 +14,11 @@ import pandas as pd
 def scroll_page(is_first_page: bool = True, pagination: int = 5):
 
     if is_first_page:
-        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729113-Reviews-Lufthansa.html#REVIEWS'
+        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729069-Reviews-Emirates'
         start_firefox(headless=True)
         go_to(first_page_url)
     else:
-        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729113-Reviews-or{pagination}-Lufthansa.html#REVIEWS'
+        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729069-Reviews-or{pagination}-Emirates.html#REVIEWS'
         start_firefox(headless=True)
         go_to(url_paginated)
 
