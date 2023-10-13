@@ -25,7 +25,7 @@ def scroll_page(is_first_page: bool = True, pagination: int = 5):
     ''' Scrolling routine '''
     
     click('Akzeptieren')
-    scroll_down(500)
+    scroll_down(2500)
 
 ''' Scrolling after scraping the ratings first'''
 def scroll_delay():
@@ -124,7 +124,7 @@ def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: in
             review['text'] = text
             # review['date'] = date
             # review['connection'] = connection
-            review['airline'] = 'Lufthansa'
+            review['airline'] = 'Emirates'
 
             ''' Single Review scraped feedback'''
             print(f'Review with ID: {review["_id"]} scraped!')
@@ -135,7 +135,8 @@ def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: in
         
         ''' Set sleeping time to avoid too many requests in a short period of time'''
         if (i != number_of_pages-5):
-            sleeping_time = random.randint(10,15)
+            # sleeping_time = random.randint(5,10)
+            sleeping_time = 5
             print(f'Sleeping time: {sleeping_time} sec.')
             time.sleep(sleeping_time)
 
@@ -169,13 +170,13 @@ def load(reviews: list[TripAdvisorReview]):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv('tripadvisor_lufthansa_reviews.csv', encoding='UTF-8')
+    df.to_csv('tripadvisor_emirates_reviews.csv', encoding='UTF-8')
         
 
 def main():
 
     # First 100 Batch
-    review_list = extract(first_page=True, number_of_pages=1000)
+    review_list = extract(first_page=True, number_of_pages=100)
     review_list = transform(review_list)
     load(review_list)
 
