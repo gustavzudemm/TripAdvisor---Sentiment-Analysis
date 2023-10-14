@@ -136,7 +136,7 @@ def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: in
         ''' Set sleeping time to avoid too many requests in a short period of time'''
         if (i != number_of_pages-5):
             # sleeping_time = random.randint(5,10)
-            sleeping_time = 5
+            sleeping_time = random.randint(10,15)
             print(f'Sleeping time: {sleeping_time} sec.')
             time.sleep(sleeping_time)
 
