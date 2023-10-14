@@ -15,11 +15,11 @@ def scroll_page(is_first_page: bool = True, pagination: int = 5):
 
     if is_first_page:
         first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729134-Reviews-Qatar-Airways'
-        start_firefox(headless=False)
+        start_firefox(headless=True)
         go_to(first_page_url)
     else:
         url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729134-Reviews-or{pagination}-Qatar-Airways.html#REVIEWS'
-        start_firefox(headless=False)
+        start_firefox(headless=True)
         go_to(url_paginated)
 
     ''' Scrolling routine '''
