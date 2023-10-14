@@ -14,12 +14,12 @@ import pandas as pd
 def scroll_page(is_first_page: bool = True, pagination: int = 5):
 
     if is_first_page:
-        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729069-Reviews-Emirates'
-        start_firefox(headless=True)
+        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729134-Reviews-Qatar-Airways'
+        start_firefox(headless=False)
         go_to(first_page_url)
     else:
-        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729069-Reviews-or{pagination}-Emirates.html#REVIEWS'
-        start_firefox(headless=True)
+        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729134-Reviews-or{pagination}-Qatar-Airways.html#REVIEWS'
+        start_firefox(headless=False)
         go_to(url_paginated)
 
     ''' Scrolling routine '''
@@ -88,7 +88,7 @@ def scrape_routine():
 
 
 ''' Generate unique ID for each Review '''
-def generate_uid():
+def generate_uid() -> str:
 
     # Define the pool of characters to choose from
     characters = string.ascii_letters + string.digits
@@ -170,13 +170,13 @@ def load(reviews: list[TripAdvisorReview]):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv('tripadvisor_emirates_reviews.csv', encoding='UTF-8')
+    df.to_csv('tripadvisor_qatar_airways_reviews.csv', encoding='UTF-8')
         
 
 def main():
 
     # First 100 Batch
-    review_list = extract(first_page=True, number_of_pages=100)
+    review_list = extract(first_page=True, number_of_pages=1000)
     review_list = transform(review_list)
     load(review_list)
 
