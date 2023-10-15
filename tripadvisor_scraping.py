@@ -124,7 +124,7 @@ def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: in
             review['text'] = text
             # review['date'] = date
             # review['connection'] = connection
-            review['airline'] = 'Emirates'
+            review['airline'] = 'Qatar Airways'
 
             ''' Single Review scraped feedback'''
             print(f'Review with ID: {review["_id"]} scraped!')
@@ -176,7 +176,7 @@ def load(reviews: list[TripAdvisorReview]):
 def main():
 
     # First 100 Batch
-    review_list = extract(first_page=True, number_of_pages=135)
+    review_list = extract(first_page=True, number_of_pages=100)
     review_list = transform(review_list)
     load(review_list)
 
