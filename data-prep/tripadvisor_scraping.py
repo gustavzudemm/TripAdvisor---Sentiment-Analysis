@@ -14,17 +14,20 @@ import pandas as pd
 def scroll_page(is_first_page: bool = True, pagination: int = 5):
 
     if is_first_page:
-        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729134-Reviews-Qatar-Airways'
-        start_firefox(headless=True)
+        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729113-Reviews-Lufthansa.html#REVIEWS'
+        start_firefox(headless=False)
         go_to(first_page_url)
     else:
-        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729134-Reviews-or{pagination}-Qatar-Airways.html#REVIEWS'
+        url_paginated = f'https://tripadvisor.de/Airline_Review-d8729113-Reviews-or{pagination}-Lufthansa.html#REVIEWS'
         start_firefox(headless=True)
         go_to(url_paginated)
 
     ''' Scrolling routine '''
     
     click('Akzeptieren')
+    time.sleep(1)
+    click('Befriedigend')
+    time.sleep(1)
     scroll_down(2500)
 
 ''' Scrolling after scraping the ratings first'''
@@ -176,7 +179,7 @@ def load(reviews: list[TripAdvisorReview]):
 def main():
 
     # First 100 Batch
-    review_list = extract(first_page=True, number_of_pages=100)
+    review_list = extract(first_page=True)
     review_list = transform(review_list)
     load(review_list)
 
