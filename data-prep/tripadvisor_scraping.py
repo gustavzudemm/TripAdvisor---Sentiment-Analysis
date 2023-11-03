@@ -10,25 +10,30 @@ import re
 import pandas as pd
 
 
-''' Scrolling the page'''
-def scroll_page(is_first_page: bool = True, pagination: int = 5):
 
-    if is_first_page:
-        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729113-Reviews-Lufthansa.html#REVIEWS'
-        start_firefox(headless=False)
+''' Scrolling the page'''
+def scroll_page(pagination: int):
+
+    if pagination == 0:
+        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729151-Reviews-Singapore-Airlines.html#REVIEWS'
+
+        '''Check currently scraped page'''
+        print(first_page_url)
+        start_firefox(headless=True)
         go_to(first_page_url)
     else:
-        url_paginated = f'https://tripadvisor.de/Airline_Review-d8729113-Reviews-or{pagination}-Lufthansa.html#REVIEWS'
+        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729151-Reviews-or{pagination}-Singapore-Airlines.html#REVIEWS'
+
+        '''Check currently scraped page'''
+        print(url_paginated)
         start_firefox(headless=True)
         go_to(url_paginated)
 
     ''' Scrolling routine '''
-    
     click('Akzeptieren')
+    scroll_down(150)
     time.sleep(1)
-    click('Befriedigend')
-    time.sleep(1)
-    scroll_down(2500)
+    # scroll_down(2500)
 
 ''' Scrolling after scraping the ratings first'''
 def scroll_delay():
@@ -86,10 +91,6 @@ def get_flight_connections():
     return flight_connections
 
 
-def scrape_routine():
-    pass
-
-
 ''' Generate unique ID for each Review '''
 def generate_uid() -> str:
 
@@ -97,51 +98,60 @@ def generate_uid() -> str:
     characters = string.ascii_letters + string.digits
     unique_id = ''.join(random.choice(characters) for _ in range(8))
     return unique_id
-        
 
-def extract(first_page: bool = True, number_of_pages: int = 5, starting_page: int  = 0) -> list[dict]:
+    
+def extract(starting_page: int= 0, number_of_pages: int = 5) -> list[dict]:
 
     review_list = []
-    first_page = True
 
     for i in range(starting_page, number_of_pages, 5):
 
-        print(f'Scraping page {i} of {number_of_pages}...')
+        try:
 
-        scroll_page(first_page, i)
-        star_ratings = get_ratings()
-        scroll_delay()
-        # review_titles = get_review_titles()
-        review_texts = get_review_texts()
-        # travel_dates = get_travel_dates()
-        # flight_connections = get_flight_connections()
+            print(f'Scraping page {i} of {number_of_pages}...')
 
-        kill_browser()
+            scroll_page(i)
+            star_ratings = get_ratings()
+            scroll_delay()
+            # review_titles = get_review_titles()
+            review_texts = get_review_texts()
+            print(review_texts)
+            # travel_dates = get_travel_dates()
+            # flight_connections = get_flight_connections()
 
-        ''' Create dictionaries and append them to review_list '''
-        for rating, text in zip(star_ratings, review_texts):
-            review = {}
-            review['_id'] = generate_uid()
-            # review['title'] = title
-            review['rating'] = rating
-            review['text'] = text
-            # review['date'] = date
-            # review['connection'] = connection
-            review['airline'] = 'Qatar Airways'
+            kill_browser()
 
-            ''' Single Review scraped feedback'''
-            print(f'Review with ID: {review["_id"]} scraped!')
+            ''' Create dictionaries and append them to review_list '''
+            for rating, text in zip(star_ratings, review_texts):
+                review = {}
+                review['_id'] = generate_uid()
+                # review['title'] = title
+                review['rating'] = rating
+                review['text'] = text
+                # review['date'] = date
+                # review['connection'] = connection
+                review['airline'] = 'Singapore Airlines'
 
-            review_list.append(review)
+                ''' Single Review scraped feedback'''
+                print(f'Review with ID: {review["_id"]} scraped!')
 
-        first_page = False
-        
-        ''' Set sleeping time to avoid too many requests in a short period of time'''
-        if (i != number_of_pages-5):
-            # sleeping_time = random.randint(5,10)
-            sleeping_time = random.randint(10,15)
-            print(f'Sleeping time: {sleeping_time} sec.')
-            time.sleep(sleeping_time)
+                review_list.append(review)
+            
+            ''' Set sleeping time to avoid too many requests in a short period of time'''
+            if (i != number_of_pages-5):
+                # sleeping_time = random.randint(5,10)
+                sleeping_time = random.randint(10,15)
+                print(f'Sleeping time: {sleeping_time} sec.')
+                time.sleep(sleeping_time)
+        except LookupError:
+            print("LookupError: continue scraping...")
+
+        except TypeError:
+            print("Browser Window closed: continue scraping...")
+
+        except Exception as e:
+            print("Unknown error occurred: continue scraping...")
+            time.sleep(10)
 
     return review_list
 
@@ -164,7 +174,7 @@ def transform(reviews: list[dict]) -> list[TripAdvisorReview]:
     
     return review_dataobj
 
-def load(reviews: list[TripAdvisorReview]):
+def load(reviews: list[TripAdvisorReview], number_of_pages: int):
     
     review_dict = []
 
@@ -173,15 +183,19 @@ def load(reviews: list[TripAdvisorReview]):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv('tripadvisor_qatar_airways_reviews.csv', encoding='UTF-8')
+    df.to_csv(f'tripadvisor_airline_sq_batch_{number_of_pages}.csv', encoding='UTF-8')
         
 
 def main():
 
+    # Params
+    pages = 600
+    starting_at = 100
+
     # First 100 Batch
-    review_list = extract(first_page=True)
+    review_list = extract(starting_page=starting_at, number_of_pages=pages)
     review_list = transform(review_list)
-    load(review_list)
+    load(reviews=review_list, number_of_pages=pages)
 
 
 if __name__ == "__main__":
