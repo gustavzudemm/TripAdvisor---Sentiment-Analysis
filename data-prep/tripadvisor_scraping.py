@@ -15,14 +15,14 @@ import pandas as pd
 def scroll_page(pagination: int):
 
     if pagination == 0:
-        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729151-Reviews-Singapore-Airlines.html#REVIEWS'
+        first_page_url = 'https://www.tripadvisor.de/Airline_Review-d8729177-Reviews-United-Airlines.html#REVIEWS'
 
         '''Check currently scraped page'''
         print(first_page_url)
         start_firefox(headless=True)
         go_to(first_page_url)
     else:
-        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729151-Reviews-or{pagination}-Singapore-Airlines.html#REVIEWS'
+        url_paginated = f'https://www.tripadvisor.de/Airline_Review-d8729177-Reviews-or{pagination}-United-Airlines.html#REVIEWS'
 
         '''Check currently scraped page'''
         print(url_paginated)
@@ -183,14 +183,14 @@ def load(reviews: list[TripAdvisorReview], number_of_pages: int):
         review_dict.append(review)
 
     df = pd.DataFrame.from_records(review_dict)
-    df.to_csv(f'tripadvisor_airline_sq_batch_{number_of_pages}.csv', encoding='UTF-8')
+    df.to_csv(f'tripadvisor_airline_ua_batch_{number_of_pages}.csv', encoding='UTF-8')
         
 
 def main():
 
     # Params
-    pages = 1000
-    starting_at = 600
+    pages = 685
+    starting_at = 0
 
     # First 100 Batch
     review_list = extract(starting_page=starting_at, number_of_pages=pages)
